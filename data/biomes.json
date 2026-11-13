@@ -5,19 +5,64 @@
       "id": "meadow",
       "name": "Sunlit Meadow",
       "speed_required": 0,
-      "guardian": "meadow_warden",
-      "music_key": "none",
+      "background": "lush grass plains",
+      "guardian": {
+        "id": "meadow_warden",
+        "name": "Meadow Warden",
+        "patrol_speed": 1.8,
+        "chase_speed": 3.2,
+        "detection_range": 7.0,
+        "roam_radius": 8.0,
+        "position": {"x": 8.0, "y": 0.0, "z": 0.0}
+      },
+      "music_key": "meadow_tune",
       "event_key": "none",
-      "spawn_table": [{"pokemon_id": "sproutling", "weight": 80}, {"pokemon_id": "ember_fox", "weight": 20}]
+      "spawn_table": [
+        {"pokemon_id": "sproutling", "weight": 80},
+        {"pokemon_id": "ember_fox", "weight": 20}
+      ]
     },
     {
-      "id": "moon_grove",
-      "name": "Moon Grove",
+      "id": "forest",
+      "name": "Mossy Forest",
       "speed_required": 12,
-      "guardian": "grove_warden",
-      "music_key": "none",
+      "background": "cool dark woods",
+      "guardian": {
+        "id": "forest_warden",
+        "name": "Forest Warden",
+        "patrol_speed": 2.2,
+        "chase_speed": 4.0,
+        "detection_range": 9.0,
+        "roam_radius": 10.5,
+        "position": {"x": 10.0, "y": 0.0, "z": -3.0}
+      },
+      "music_key": "forest_tune",
       "event_key": "moon_bloom",
-      "spawn_table": [{"pokemon_id": "moon_moth", "weight": 100}]
+      "spawn_table": [
+        {"pokemon_id": "ember_fox", "weight": 55},
+        {"pokemon_id": "moon_moth", "weight": 45}
+      ]
+    },
+    {
+      "id": "glacier",
+      "name": "Icefall Glacier",
+      "speed_required": 22,
+      "background": "frozen ridge and snow light",
+      "guardian": {
+        "id": "glacier_warden",
+        "name": "Glacier Warden",
+        "patrol_speed": 2.8,
+        "chase_speed": 4.8,
+        "detection_range": 11.0,
+        "roam_radius": 12.0,
+        "position": {"x": 12.0, "y": 0.0, "z": 2.5}
+      },
+      "music_key": "glacier_tune",
+      "event_key": "rare_snowfall",
+      "spawn_table": [
+        {"pokemon_id": "moon_moth", "weight": 75},
+        {"pokemon_id": "sproutling", "weight": 25}
+      ]
     }
   ]
 }
