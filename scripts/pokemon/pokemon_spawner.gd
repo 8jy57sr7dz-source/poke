@@ -23,7 +23,7 @@ static func create_creature(definition: Dictionary, rng: RandomNumberGenerator, 
 			_add_cone(creature, Vector3(0.35, 1.48, -0.04), Vector3(0.32, 0.85, 0.3), dark_material, Vector3(0.0, 0.0, 12.0))
 			_add_sphere(creature, Vector3(0.0, 0.82, -0.59), Vector3(0.58, 0.28, 0.2), light_material)
 			_add_sphere(creature, Vector3(0.82, 0.48, 0.42), Vector3(0.35, 0.75, 0.35), light_material, Vector3(0.0, 0.0, -48.0))
-			_add_sphere(creature, Vector3(0.82, 0.83, 0.42), Vector3(0.4, 0.28, 0.36), ColorMaterial.new())
+			_add_sphere(creature, Vector3(0.82, 0.83, 0.42), Vector3(0.4, 0.28, 0.36), _material(Color(1.0, 0.76, 0.2)))
 		"moon_moth":
 			_add_sphere(creature, Vector3(0.0, 0.55, 0.0), Vector3(0.48, 0.95, 0.5), body_material)
 			_add_sphere(creature, Vector3(0.0, 1.13, -0.03), Vector3(0.62, 0.55, 0.56), light_material)
