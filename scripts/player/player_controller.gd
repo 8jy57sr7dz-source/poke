@@ -40,7 +40,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	var key_event: InputEventKey = event
 	if key_event.pressed and not key_event.echo and game != null:
-		if key_event.keycode == KEY_E:
+		if key_event.physical_keycode == KEY_E:
 			game.try_interact()
-		elif key_event.keycode == KEY_T:
+		elif key_event.physical_keycode == KEY_T:
 			game.train()
