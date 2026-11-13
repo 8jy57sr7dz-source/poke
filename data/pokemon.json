@@ -33,7 +33,7 @@
       "id": "moon_moth",
       "name": "Moon Moth",
       "dex_number": 3,
-      "biome": "moon_grove",
+      "biome": "glacier",
       "rarity": "Rare",
       "base_value": 120,
       "income_per_second": 12.0,
