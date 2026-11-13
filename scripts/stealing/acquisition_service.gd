@@ -10,3 +10,6 @@ static func claim(record: Dictionary, player_id: int) -> Dictionary:
 	updated["claimed"] = true
 	updated["carrier_id"] = player_id
 	return updated
+
+static func spawn_claim_marker(position: Vector3) -> Dictionary:
+	return {"position": position, "claimed": true}
