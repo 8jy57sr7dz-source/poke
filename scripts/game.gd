@@ -14,7 +14,7 @@ var coins: float = 0.0
 var speed_stat: float = 0.0
 var carried: Node3D
 var placed: Array[Dictionary] = []
-pokemon_definitions: Dictionary = {}
+var pokemon_definitions: Dictionary = {}
 var economy_config: Dictionary = {}
 var biome_data: Dictionary = {}
 var rarity_timer: float = 0.0
