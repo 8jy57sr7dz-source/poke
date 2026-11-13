@@ -9,32 +9,22 @@ const CarryService = preload("res://scripts/carrying/carry_service.gd")
 const EconomyService = preload("res://scripts/economy/economy_service.gd")
 const ProgressionService = preload("res://scripts/progression/progression_service.gd")
 const SaveService = preload("res://scripts/save/save_service.gd")
-const NetworkService = preload("res://scripts/network/network_service.gd")
 
 var coins: float = 0.0
 var speed_stat: float = 0.0
 var carried: Node3D
 var placed: Array[Dictionary] = []
-var pokemon_definitions: Dictionary = {}
+pokemon_definitions: Dictionary = {}
 var economy_config: Dictionary = {}
 var biome_data: Dictionary = {}
 var rarity_timer: float = 0.0
 var guardian: Node3D
 var player: CharacterBody3D
-var network_service: Node
-var network_status := "Offline"
-var network_snapshot: Dictionary = {}
-var _network_publish_timer := 0.0
 var active_biome_id := "meadow"
 var _interference_cooldown := 0.0
 
 func _ready() -> void:
 	add_to_group("game_manager")
-	network_service = NetworkService.new()
-	network_service.name = "NetworkService"
-	add_child(network_service)
-	network_service.status_changed.connect(_on_network_status_changed)
-	network_service.snapshot_received.connect(_on_network_snapshot_received)
 	_load_game_data()
 	_build_world()
 	_refresh_biome_guardian()
@@ -45,16 +35,12 @@ func _process(delta: float) -> void:
 	coins += _placed_income() * delta
 	rarity_timer += delta
 	_interference_cooldown = maxf(_interference_cooldown - delta, 0.0)
-	_network_publish_timer += delta
-	if _network_publish_timer >= 0.25:
-		_network_publish_timer = 0.0
-		_publish_network_snapshot()
 	if rarity_timer >= 300.0:
 		rarity_timer = 0.0
 		_spawn_wild_creature(true)
 	if carried != null and is_instance_valid(carried) and player != null:
 		if guardian != null and is_instance_valid(guardian):
-			guardian.set_target(player)
+			guardian.set_target(player if carried != null else null)
 			if guardian.global_position.distance_to(player.global_position) <= float(guardian.get("attack_range")):
 				_drop_carried()
 		if carried != null and CarryService.can_deliver(player.global_position.distance_to(Vector3.ZERO)):
@@ -62,16 +48,22 @@ func _process(delta: float) -> void:
 	_update_hud()
 
 func _load_game_data() -> void:
-	var entries: Array = _read_json("res://data/pokemon.json").get("entries", [])
+	var raw: Dictionary = _read_json("res://data/pokemon.json")
+	var entries: Array = raw.get("entries", [])
+	pokemon_definitions.clear()
 	for entry in entries:
 		if entry is Dictionary:
 			pokemon_definitions[str(entry.get("id", ""))] = entry
 	economy_config = _read_json("res://data/economy.json")
 	biome_data = _read_json("res://data/biomes.json")
-	var saved := SaveService.load_data()
+	var saved: Dictionary = SaveService.load_data()
 	coins = float(saved.get("coins", 0.0))
 	speed_stat = float(saved.get("speed", 0.0))
-	placed = saved.get("placed", [])
+	placed.clear()
+	var saved_placed: Array = saved.get("placed", [])
+	for record in saved_placed:
+		if record is Dictionary:
+			placed.append(record)
 
 func _build_world() -> void:
 	var floor := MeshInstance3D.new()
@@ -157,34 +149,6 @@ func train() -> void:
 		_refresh_biome_guardian()
 		_save()
 
-func host_multiplayer(port: int = 24567) -> Error:
-	return network_service.host_game(port)
-
-func join_multiplayer(address: String, port: int = 24567) -> Error:
-	return network_service.join_game(address, port)
-
-func leave_multiplayer() -> void:
-	network_service.close_session()
-
-func _publish_network_snapshot() -> void:
-	if network_service == null or not network_service.is_host():
-		return
-	var snapshot := {
-		"coins": coins,
-		"speed": speed_stat,
-		"biome": active_biome_id,
-		"player_position": player.global_position if player != null else Vector3.ZERO,
-		"carrying": carried != null
-	}
-	network_service.publish_snapshot(snapshot)
-
-func _on_network_status_changed(value: String) -> void:
-	network_status = value
-
-func _on_network_snapshot_received(snapshot: Dictionary) -> void:
-	network_snapshot = snapshot
-
-# Hook for an authorized multiplayer hit/collision event. Network clients must not call this directly.
 func apply_interference(attacker: Node3D) -> bool:
 	if carried == null or not is_instance_valid(attacker) or _interference_cooldown > 0.0:
 		return false
@@ -269,7 +233,7 @@ func _add_marker(at: Vector3, size: Vector3, color: Color, label: String) -> voi
 func _update_hud() -> void:
 	var holding := "None" if carried == null else str(carried.get_meta("pokemon_record", {}).get("name", "Creature"))
 	if get_window() != null:
-		get_window().title = "Coins: %d | Speed: %.1f | Biome: %s | Carrying: %s | Network: %s | WASD · E interact · T train" % [int(coins), speed_stat, active_biome_id, holding, network_status]
+		get_window().title = "Coins: %d | Speed: %.1f | Biome: %s | Carrying: %s | WASD · E interact · T train" % [int(coins), speed_stat, active_biome_id, holding]
 
 func _save() -> void:
 	SaveService.save_data({"coins": coins, "speed": speed_stat, "placed": placed})
