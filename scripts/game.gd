@@ -212,16 +212,7 @@ func upgrade_base() -> bool:
 func rebirth() -> bool:
 	if not RebirthService.can_rebirth(speed_stat, rebirths):
 		return false
-	var updated := RebirthService.reset_progress({
-		"coins": coins,
-		"speed": speed_stat,
-		"placed": placed,
-		"base_level": base_level,
-		"base_slots": base_slots,
-		"pokedex": pokedex,
-		"rebirths": rebirths,
-		"permanent_bonus": permanent_bonus
-	})
+	var updated := RebirthService.reset_progress({"coins": coins, "speed": speed_stat, "placed": placed, "base_level": base_level, "base_slots": base_slots, "pokedex": pokedex, "rebirths": rebirths, "permanent_bonus": permanent_bonus})
 	coins = float(updated.get("coins", 0.0))
 	speed_stat = float(updated.get("speed", 0.0))
 	_assign_placed(updated.get("placed", []))
@@ -245,13 +236,7 @@ func leave_multiplayer() -> void:
 func _publish_network_snapshot() -> void:
 	if network_service == null or not network_service.is_host():
 		return
-	var snapshot := {
-		"coins": coins,
-		"speed": speed_stat,
-		"biome": active_biome_id,
-		"player_position": player.global_position if player != null else Vector3.ZERO,
-		"carrying": carried != null
-	}
+	var snapshot := {"coins": coins, "speed": speed_stat, "biome": active_biome_id, "player_position": player.global_position if player != null else Vector3.ZERO, "carrying": carried != null}
 	network_service.publish_snapshot(snapshot)
 
 func _on_network_status_changed(value: String) -> void:
@@ -272,9 +257,7 @@ func apply_interference(attacker: Node3D) -> bool:
 	return true
 
 func _deliver_carried() -> void:
-	if carried == null or not is_instance_valid(carried):
-		return
-	if not BaseService.can_place(placed.size(), base_level, base_slots):
+	if carried == null or not is_instance_valid(carried) or not BaseService.can_place(placed.size(), base_level, base_slots):
 		return
 	var record: Dictionary = carried.get_meta("pokemon_record", {}).duplicate(true)
 	record["size"] = carried.get_meta("size", "Normal")
@@ -314,23 +297,22 @@ func _drop_carried() -> void:
 func _spawn_wild_creature(rare: bool = false) -> void:
 	if pokemon_definitions.is_empty():
 		return
+	var ids := pokemon_definitions.keys()
+	var id: String = str(ids[randi_range(0, ids.size() - 1)])
+	_spawn_creature_by_id(id, rare)
+
+func _spawn_creature_by_id(pokemon_id: String, rare: bool = false) -> Node3D:
+	if not pokemon_definitions.has(pokemon_id):
+		push_warning("Unknown creature id: %s" % pokemon_id)
+		return null
+	var definition: Dictionary = pokemon_definitions[pokemon_id]
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
-	var biome: Dictionary = BiomeService.biome_by_id(biome_data, active_biome_id)
-	var spawn_table: Array = BiomeService.spawn_table_for(biome)
-	var definition: Dictionary
-	if not spawn_table.is_empty():
-		var entry: Dictionary = BiomeService.weighted_spawn_entry(spawn_table, rng)
-		definition = pokemon_definitions.get(str(entry.get("pokemon_id", "")), {})
-	if definition.is_empty():
-		var ids := pokemon_definitions.keys()
-		definition = pokemon_definitions.get(str(ids[rng.randi_range(0, ids.size() - 1)]), {})
-	if definition.is_empty():
-		return
-	var creature: Node3D = PokemonSpawner.create_creature(definition, rng, rare, active_biome_id, probability_config)
-	creature.position = Vector3(rng.randf_range(-10.0, 10.0), 0.45, rng.randf_range(-10.0, 10.0))
+	var creature: Node3D = PokemonSpawner.create_creature(definition, rng, rare, active_biome_id if not active_biome_id.is_empty() else "meadow", probability_config)
+	creature.position = Vector3(rng.randf_range(-10.0, 10.0), 0.0, rng.randf_range(-10.0, 10.0))
 	add_child(creature)
 	creature.add_to_group("wild_pokemon")
+	return creature
 
 func _placed_income() -> float:
 	var total := 0.0
@@ -348,28 +330,21 @@ func _add_marker(at: Vector3, size: Vector3, color: Color, label: String) -> voi
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	material.albedo_color.a = 0.55
+	material.albedo_color.a = 0.8
 	marker.material_override = material
 	add_child(marker)
 
 func _update_hud() -> void:
 	var slot_limit := BaseService.slot_limit(base_level, base_slots)
 	var completion := IndexService.completion_ratio(pokedex)
-	var holding := "None" if carried == null else str(carried.get_meta("pokemon_record", {}).get("name", "Creature"))
+	var holding := "없음" if carried == null else str(carried.get_meta("pokemon_record", {}).get("name", "크리처"))
+	var text := "코인: %d | 훈련: %.1f | 환생: %d | 기지: %d/%d | 도감: %.0f%%\n" % [int(coins), speed_stat, rebirths, placed.size(), slot_limit, completion * 100.0]
+	text += "WASD 이동 · E 크리처 줍기/배치 · T 트레드밀에서 훈련\n바이옴: %s | 들고 있음: %s | 네트워크: %s" % [active_biome_id, holding, network_status]
 	if get_window() != null:
-		get_window().title = "Coins: %d | Speed: %.1f | Rebirth: %d | Base: %d/%d | Dex: %.0f%% | Carrying: %s | Network: %s | WASD · E interact · T train" % [int(coins), speed_stat, rebirths, placed.size(), slot_limit, completion * 100.0, holding, network_status]
+		get_window().title = text
 
 func _save() -> void:
-	SaveService.save_data({
-		"coins": coins,
-		"speed": speed_stat,
-		"placed": placed,
-		"base_level": base_level,
-		"base_slots": base_slots,
-		"pokedex": pokedex,
-		"rebirths": rebirths,
-		"permanent_bonus": permanent_bonus
-	})
+	SaveService.save_data({"coins": coins, "speed": speed_stat, "placed": placed, "base_level": base_level, "base_slots": base_slots, "pokedex": pokedex, "rebirths": rebirths, "permanent_bonus": permanent_bonus})
 
 func _read_json(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
