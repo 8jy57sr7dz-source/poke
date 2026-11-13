@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "biomes": [
+    {
+      "id": "meadow",
+      "name": "Sunlit Meadow",
+      "speed_required": 0,
+      "guardian": "meadow_warden",
+      "music_key": "none",
+      "event_key": "none",
+      "spawn_table": [{"pokemon_id": "sproutling", "weight": 80}, {"pokemon_id": "ember_fox", "weight": 20}]
+    },
+    {
+      "id": "moon_grove",
+      "name": "Moon Grove",
+      "speed_required": 12,
+      "guardian": "grove_warden",
+      "music_key": "none",
+      "event_key": "moon_bloom",
+      "spawn_table": [{"pokemon_id": "moon_moth", "weight": 100}]
+    }
+  ]
+}

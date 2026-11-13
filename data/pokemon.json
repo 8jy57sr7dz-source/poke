@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "id": "sproutling",
+      "name": "Sproutling",
+      "dex_number": 1,
+      "biome": "meadow",
+      "rarity": "Common",
+      "base_value": 10,
+      "income_per_second": 1.0,
+      "weight_kg": 4.0,
+      "base_scale": 0.8,
+      "carry_speed_factor": 0.92,
+      "model_key": "placeholder",
+      "animation_key": "idle"
+    },
+    {
+      "id": "ember_fox",
+      "name": "Ember Fox",
+      "dex_number": 2,
+      "biome": "meadow",
+      "rarity": "Uncommon",
+      "base_value": 35,
+      "income_per_second": 3.5,
+      "weight_kg": 9.0,
+      "base_scale": 1.0,
+      "carry_speed_factor": 0.82,
+      "model_key": "placeholder",
+      "animation_key": "idle"
+    },
+    {
+      "id": "moon_moth",
+      "name": "Moon Moth",
+      "dex_number": 3,
+      "biome": "moon_grove",
+      "rarity": "Rare",
+      "base_value": 120,
+      "income_per_second": 12.0,
+      "weight_kg": 2.5,
+      "base_scale": 1.15,
+      "carry_speed_factor": 0.96,
+      "model_key": "placeholder",
+      "animation_key": "idle"
+    }
+  ]
+}

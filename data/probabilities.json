@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "classification": "TEST_DEFAULTS_NOT_OFFICIAL_ODDS",
+  "probability_version": "prototype-1",
+  "effective_from": "2026-01-01T00:00:00Z",
+  "rare_spawn_interval_seconds": 300,
+  "tables": {
+    "rarity": [
+      {"id": "Common", "weight": 80},
+      {"id": "Uncommon", "weight": 17},
+      {"id": "Rare", "weight": 3}
+    ],
+    "size": [
+      {"id": "Tiny", "weight": 5}, {"id": "Small", "weight": 15},
+      {"id": "Normal", "weight": 50}, {"id": "Large", "weight": 20},
+      {"id": "Huge", "weight": 8}, {"id": "Giant", "weight": 2}
+    ],
+    "mutation": [
+      {"id": "None", "weight": 900}, {"id": "Silver", "weight": 45},
+      {"id": "Golden", "weight": 25}, {"id": "Rainbow", "weight": 10},
+      {"id": "Bloom", "weight": 15}, {"id": "Spirit Bloom", "weight": 5}
+    ],
+    "shiny": [{"id": "false", "weight": 999}, {"id": "true", "weight": 1}]
+  }
+}

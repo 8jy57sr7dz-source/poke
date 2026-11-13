@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "size_multipliers": {"Tiny": 0.75, "Small": 0.9, "Normal": 1.0, "Large": 1.25, "Huge": 1.75, "Giant": 2.5},
+  "mutation_multipliers": {"None": 1.0, "Silver": 1.5, "Golden": 2.0, "Rainbow": 3.0, "Bloom": 1.7, "Spirit Bloom": 2.5},
+  "offline_income_cap_seconds": 28800,
+  "base_slots": 5,
+  "base_upgrade_cost": 100,
+  "treadmill_speed_per_second": 0.25
+}
